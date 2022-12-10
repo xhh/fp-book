@@ -1,6 +1,6 @@
 module Ch5 where
 
-import Prelude
+import Prelude (Unit, discard, negate, otherwise, show, (#), ($), (+), (-), (==), (<), (<=), (>), type (~>))
 
 import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
@@ -9,24 +9,62 @@ import Effect.Console (log)
 
 test :: Effect Unit
 test = do
+  log $ show $ flip const 1 2
+  flip const 1 2 # show # log
+  log $ show $ singleton "xyz"
+  log $ show $ null Nil
+  log $ show $ null ("abc" : Nil)
+  log $ show $ snoc (1 : 2 : Nil) 3
+  log $ show $ length $ 1 : 2 : 3 : Nil
+  log $ show (head Nil :: Maybe Unit)
+  log $ show $ head ("abc" : "123" : Nil)
+  log $ show $ tail (Nil :: List Unit)
+  log $ show $ tail ("abc" : "123" : Nil)
+
+  log "\n------- last"
+  log $ show $ (last Nil :: Maybe Unit)
+  log $ show $ last ("a" : "b" : "c" : Nil)
+
+  log "\n------- init"
+  log $ show $ init (Nil :: List Unit)
+  log $ show $ init (1 : Nil)
+  log $ show $ init (1 : 2 : Nil)
+  log $ show $ init (1 : 2 : 3 : Nil)
+
+  log "\n------- uncons"
+  log $ show $ uncons (1 : 2 : 3 : Nil)
+
+  log "\n------- index"
+  log $ show $ index (1 : Nil) 4
+  log $ show $ index (1 : 2 : 3 : Nil) 1
+  log $ show $ index (Nil :: List Unit) 0
+  log $ show $ (1 : 2 : 3 : Nil) !! 1
+  log $ show $ flip index 0 (1 : 2 : 3 : Nil)
+
   log "\n------- findLastIndex"
   log $ show $ findLastIndex (_ == 10) (Nil :: List Int)
   log $ show $ findLastIndex (_ == 10) (10 : 5 : 10 : -1 : 2 : 10 : Nil)
   log $ show $ findLastIndex (_ == 10) (11 : 12 : Nil)
+
   log "\n------- reverse"
   log $ show $ reverse (10 : 20 : 30 : Nil)
   log $ show $ reverse (10 : 20 : Nil)
   log $ show $ reverse (10 : Nil)
   log $ show $ reverse (Nil :: List Unit)
+
   log "\n------- concat"
   log $ show $ concat ((1 : 2 : 3 : Nil) : (4 : 5 : Nil) : (6 : Nil) : (Nil) : Nil)
+
   log "\n------- filter"
   log $ show $ filter (4 > _) $ (1 : 2 : 3 : 4 : 5 : 6 : Nil)
+
   log "\n------- catMaybes"
   log $ show $ catMaybes (Just 1 : Nothing : Just 2 : Nothing : Nothing : Just 5 : Nil)
+
   log "\n------- range"
   log $ show $ range 1 10
   log $ show $ range 3 (-3)
+
   log ""
 
 range :: Int -> Int -> List Int
@@ -100,3 +138,72 @@ findLastIndex pred l = go 0 l
   --   else
   --     Nothing
   go i (_ : xs) = go (i + 1) xs
+
+infixl 8 index as !!
+
+index :: ∀ a. List a -> Int -> Maybe a
+index Nil _ = Nothing
+
+index (x : xs) i
+  | i < 0 = Nothing
+  | i == 0 = Just x
+  | otherwise = index xs (i - 1)
+
+uncons :: ∀ a. List a -> Maybe { head :: a, tail :: List a }
+uncons Nil = Nothing
+
+uncons (x : xs) = Just { head: x, tail: xs }
+
+init :: ∀ a. List a -> Maybe (List a)
+init Nil = Nothing
+
+init (_ : Nil) = Just Nil
+
+-- init (x : xs) = Just (x : (unwrap? $ init xs))
+init (x : xs) = case init xs of
+  Nothing -> Nothing -- will never be executed
+  Just xs2 -> Just (x : xs2)
+
+last :: ∀ a. List a -> Maybe a
+last Nil = Nothing
+
+last (x : Nil) = Just x
+
+last (_ : xs) = last xs
+
+tail :: ∀ a. List a -> Maybe (List a)
+tail Nil = Nothing
+
+tail (_ : xs) = Just xs
+
+head :: ∀ a. List a -> Maybe a
+head Nil = Nothing
+
+head (x : _) = Just x
+
+length :: ∀ a. List a -> Int
+length l = go 0 l
+  where
+  go :: Int -> List a -> Int
+  go acc Nil = acc
+
+  go acc (_ : xs) = go (acc + 1) xs
+
+flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
+flip f x y = f y x
+
+const :: ∀ a b. a -> b -> a
+const x _ = x
+
+singleton :: ∀ a. a -> List a
+singleton x = x : Nil
+
+null :: ∀ a. List a -> Boolean
+null Nil = true
+
+null _ = false
+
+snoc :: ∀ a. List a -> a -> List a
+snoc Nil x = singleton x
+
+snoc (y : ys) x = y : snoc ys x
