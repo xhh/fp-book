@@ -1,0 +1,7 @@
+{
+  "purescript.addNpmPath": true,
+  "editor.formatOnSave": true,
+  "[purescript]": {
+    "editor.tabSize": 2
+  }
+}
