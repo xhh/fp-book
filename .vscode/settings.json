@@ -3,5 +3,6 @@
   "editor.formatOnSave": true,
   "[purescript]": {
     "editor.tabSize": 2
-  }
+  },
+  "purescript.addPscPackageSources": true
 }
