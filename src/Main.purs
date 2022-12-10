@@ -24,12 +24,24 @@ main = do
   log $ show $ filter (4 > _) $ (1 : 2 : 3 : 4 : 5 : 6 : Nil)
   log "\n------- catMaybes"
   log $ show $ catMaybes (Just 1 : Nothing : Just 2 : Nothing : Nothing : Just 5 : Nil)
+  log "\n------- range"
+  log $ show $ range 1 10
+  log $ show $ range 3 (-3)
   log ""
+
+range :: Int -> Int -> List Int
+range a b = go Nil b
+  where
+  go acc n
+    | n == a = (a : acc)
+    | otherwise = go (n : acc) (n - step)
+  step = if a <= b then 1 else -1
 
 catMaybes :: ∀ a. List (Maybe a) -> List a
 catMaybes Nil = Nil
 catMaybes (Nothing : xs) = catMaybes xs
 catMaybes (Just x : xs) = x : catMaybes xs
+
 -- catMaybes = reverse <<< go Nil
 --   where
 --   go acc Nil = acc
