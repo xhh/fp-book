@@ -143,7 +143,6 @@ infixl 8 index as !!
 
 index :: ∀ a. List a -> Int -> Maybe a
 index Nil _ = Nothing
-
 index (x : xs) i
   | i < 0 = Nothing
   | i == 0 = Just x
@@ -151,14 +150,11 @@ index (x : xs) i
 
 uncons :: ∀ a. List a -> Maybe { head :: a, tail :: List a }
 uncons Nil = Nothing
-
 uncons (x : xs) = Just { head: x, tail: xs }
 
 init :: ∀ a. List a -> Maybe (List a)
 init Nil = Nothing
-
 init (_ : Nil) = Just Nil
-
 -- init (x : xs) = Just (x : (unwrap? $ init xs))
 init (x : xs) = case init xs of
   Nothing -> Nothing -- will never be executed
@@ -166,19 +162,15 @@ init (x : xs) = case init xs of
 
 last :: ∀ a. List a -> Maybe a
 last Nil = Nothing
-
 last (x : Nil) = Just x
-
 last (_ : xs) = last xs
 
 tail :: ∀ a. List a -> Maybe (List a)
 tail Nil = Nothing
-
 tail (_ : xs) = Just xs
 
 head :: ∀ a. List a -> Maybe a
 head Nil = Nothing
-
 head (x : _) = Just x
 
 length :: ∀ a. List a -> Int
@@ -186,7 +178,6 @@ length l = go 0 l
   where
   go :: Int -> List a -> Int
   go acc Nil = acc
-
   go acc (_ : xs) = go (acc + 1) xs
 
 flip :: ∀ a b c. (a -> b -> c) -> b -> a -> c
@@ -200,10 +191,8 @@ singleton x = x : Nil
 
 null :: ∀ a. List a -> Boolean
 null Nil = true
-
 null _ = false
 
 snoc :: ∀ a. List a -> a -> List a
 snoc Nil x = singleton x
-
 snoc (y : ys) x = y : snoc ys x
