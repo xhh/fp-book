@@ -27,17 +27,22 @@ concat :: ∀ a. List (List a) -> List a
 -- concat ll = go Nil ll
 --   where
 --   go acc Nil = acc
---   go acc (l : ls) = go (append (reverse acc) l) ls
+--   go acc (l : ls) = go (go2 (reverse acc) l) ls
 
---   append Nil l = l
---   append (x : xs) l = append xs (x : l)
+--   go2 Nil l = l
+--   go2 (x : xs) l = go2 xs (x : l)
+
 concat ll = reverse $ go Nil ll
   where
   go acc Nil = acc
-  go acc (l : ls) = go (append l acc) ls
+  go acc (l : ls) = go (go2 l acc) ls
 
-  append Nil l = l
-  append (x : xs) l = append xs (x : l)
+  go2 Nil l = l
+  go2 (x : xs) l = go2 xs (x : l)
+
+-- concat Nil = Nil
+-- concat (Nil : xs) = concat xs
+-- concat ((x : xs) : xss) = x : concat (xs : xss)
 
 reverse :: List ~> List
 -- reverse Nil = Nil
