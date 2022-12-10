@@ -19,9 +19,32 @@ main = do
   log $ show $ reverse (10 : Nil)
   log $ show $ reverse (Nil :: List Unit)
   log "\n------- concat"
-  log $ show $
-    concat ((1 : 2 : 3 : Nil) : (4 : 5 : Nil) : (6 : Nil) : (Nil) : Nil)
+  log $ show $ concat ((1 : 2 : 3 : Nil) : (4 : 5 : Nil) : (6 : Nil) : (Nil) : Nil)
+  log "\n------- filter"
+  log $ show $ filter (4 > _) $ (1 : 2 : 3 : 4 : 5 : 6 : Nil)
+  log "\n------- catMaybes"
+  log $ show $ catMaybes (Just 1 : Nothing : Just 2 : Nothing : Nothing : Just 5 : Nil)
   log ""
+
+catMaybes :: ∀ a. List (Maybe a) -> List a
+catMaybes Nil = Nil
+catMaybes (Nothing : xs) = catMaybes xs
+catMaybes (Just x : xs) = x : catMaybes xs
+-- catMaybes = reverse <<< go Nil
+--   where
+--   go acc Nil = acc
+--   go acc (Nothing : xs) = go acc xs
+--   go acc (Just x : xs) = go (x : acc) xs
+
+filter :: ∀ a. (a -> Boolean) -> List a -> List a
+-- filter _ Nil = Nil
+-- filter pred (x : xs)
+--   | pred x = x : filter pred xs
+--   | otherwise = filter pred xs
+filter pred l = reverse $ go Nil l
+  where
+  go acc Nil = acc
+  go acc (x : xs) = if pred x then go (x : acc) xs else go acc xs
 
 concat :: ∀ a. List (List a) -> List a
 -- concat ll = go Nil ll
