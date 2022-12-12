@@ -76,7 +76,16 @@ test = do
   log $ show $ takeWhile (_ > 3) (5 : 4 : 3 : 99 : 101 : Nil)
   log $ show $ takeWhile (_ == -17) (1 : 2 : 3 : Nil)
 
+  log "\n------- dropWhile"
+  log $ show $ dropWhile (_ > 3) (5 : 4 : 3 : 99 : 101 : Nil)
+  log $ show $ dropWhile (_ == -17) (1 : 2 : 3 : Nil)
+
   log ""
+
+dropWhile :: ∀ a. (a -> Boolean) -> List a -> List a
+dropWhile _ Nil = Nil
+-- dropWhile pred (x : xs) = if pred x then dropWhile pred xs else (x : xs)
+dropWhile pred l@(x : xs) = if pred x then dropWhile pred xs else l
 
 takeWhile :: ∀ a. (a -> Boolean) -> List a -> List a
 takeWhile _ Nil = Nil
