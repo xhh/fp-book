@@ -5,7 +5,7 @@ import Data.Maybe (Maybe(..))
 import Data.Tuple (Tuple(..), snd)
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, discard, negate, otherwise, show, (#), ($), (+), (-), (==), (<), (<=), (>), type (~>), (>>>))
+import Prelude (type (~>), Unit, discard, negate, otherwise, show, (#), ($), (+), (-), (<), (<=), (==), (>), (>>>))
 
 test :: Effect Unit
 test = do
@@ -85,7 +85,20 @@ test = do
   log $ show $ takeEnd 3 (1 : 2 : 3 : 4 : 5 : 6 : Nil)
   log $ show $ takeEnd 10 (1 : Nil)
 
+  log "\n------- dropEnd"
+  log $ show $ dropEnd 3 (1 : 2 : 3 : 4 : 5 : 6 : Nil)
+  log $ show $ dropEnd 10 (1 : Nil)
+
   log ""
+
+dropEnd :: ∀ a. Int -> List a -> List a
+dropEnd n = go >>> snd
+  where
+  go Nil = Tuple 0 Nil
+  go (x : xs) = Tuple (n' + 1) l'
+    where
+    Tuple n' l = go xs
+    l' = if n' < n then l else (x : l)
 
 takeEnd :: ∀ a. Int -> List a -> List a
 -- takeEnd _ Nil = Nil
