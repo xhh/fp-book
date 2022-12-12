@@ -65,7 +65,23 @@ test = do
   log $ show $ range 1 10
   log $ show $ range 3 (-3)
 
+  log "\n------- take"
+  log $ show $ take 5 (12 : 13 : 14 : Nil)
+  log $ show $ take 5 (-7 : 9 : 0 : 12 : -13 : 45 : 976 : -19 : Nil)
+
   log ""
+
+take :: ∀ a. Int -> List a -> List a
+take _ Nil = Nil
+take n _ | n <= 0 = Nil
+take n (x : xs) = x : take (n - 1) xs
+
+-- -- go Nil (max 0 n) l
+-- take n l = reverse $ go Nil n l
+--   where
+--   go acc _ Nil = acc
+--   go acc n' _ | n' <= 0 = acc
+--   go acc n' (x : xs) = go (x : acc) (n' - 1) xs
 
 range :: Int -> Int -> List Int
 range a b = go Nil b
