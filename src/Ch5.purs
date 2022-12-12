@@ -94,7 +94,18 @@ test = do
   log $ show $ zip ("a" : "b" : "c" : "d" : "e" : Nil) (1 : 2 : 3 : Nil)
   log $ show $ zip (Nil :: List Unit) (1 : 2 : Nil)
 
+  log "\n------- unzip"
+  log $ show $ unzip (Tuple 1 "a" : Tuple 2 "b" : Tuple 3 "c" : Nil)
+  log $ show $ unzip (Tuple "a" 1 : Tuple "b" 2 : Tuple "c" 3 : Nil)
+  log $ show $ unzip (Nil :: List (Tuple Unit Unit))
+
   log ""
+
+unzip :: ∀ a b. List (Tuple a b) -> Tuple (List a) (List b)
+unzip Nil = Tuple Nil Nil
+unzip (Tuple x y : xys) = Tuple (x : xs) (y : ys)
+  where
+  Tuple xs ys = unzip xys
 
 zip :: ∀ a b. List a -> List b -> List (Tuple a b)
 zip Nil _ = Nil
