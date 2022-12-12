@@ -2,9 +2,10 @@ module Ch5 where
 
 import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
+import Data.Tuple (Tuple(..), snd)
 import Effect (Effect)
 import Effect.Console (log)
-import Prelude (Unit, discard, negate, otherwise, show, (#), ($), (+), (-), (==), (<), (<=), (>), type (~>))
+import Prelude (Unit, discard, negate, otherwise, show, (#), ($), (+), (-), (==), (<), (<=), (>), type (~>), (>>>))
 
 test :: Effect Unit
 test = do
@@ -80,7 +81,25 @@ test = do
   log $ show $ dropWhile (_ > 3) (5 : 4 : 3 : 99 : 101 : Nil)
   log $ show $ dropWhile (_ == -17) (1 : 2 : 3 : Nil)
 
+  log "\n----- takeEnd"
+  log $ show $ takeEnd 3 (1 : 2 : 3 : 4 : 5 : 6 : Nil)
+  log $ show $ takeEnd 10 (1 : Nil)
+
   log ""
+
+takeEnd :: ∀ a. Int -> List a -> List a
+-- takeEnd _ Nil = Nil
+-- takeEnd n l
+--   | n <= 0 = Nil
+--   -- | otherwise = l # reverse # take n # reverse
+--   | otherwise = drop (length l - n) l
+takeEnd n = go >>> snd
+  where
+  go Nil = Tuple 0 Nil
+  go (x : xs) = Tuple (n' + 1) l'
+    where
+    Tuple n' l = go xs
+    l' = if n' < n then (x : l) else l
 
 dropWhile :: ∀ a. (a -> Boolean) -> List a -> List a
 dropWhile _ Nil = Nil
