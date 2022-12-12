@@ -1,11 +1,10 @@
 module Ch5 where
 
-import Prelude (Unit, discard, negate, otherwise, show, (#), ($), (+), (-), (==), (<), (<=), (>), type (~>))
-
 import Data.List (List(..), (:))
 import Data.Maybe (Maybe(..))
 import Effect (Effect)
 import Effect.Console (log)
+import Prelude (Unit, discard, negate, otherwise, show, (#), ($), (+), (-), (==), (<), (<=), (>), type (~>))
 
 test :: Effect Unit
 test = do
@@ -73,7 +72,15 @@ test = do
   log $ show $ drop 2 (1 : 2 : 3 : 4 : 5 : 6 : 7 : Nil)
   log $ show $ drop 10 (Nil :: List Unit)
 
+  log "\n------- takeWhile"
+  log $ show $ takeWhile (_ > 3) (5 : 4 : 3 : 99 : 101 : Nil)
+  log $ show $ takeWhile (_ == -17) (1 : 2 : 3 : Nil)
+
   log ""
+
+takeWhile :: ∀ a. (a -> Boolean) -> List a -> List a
+takeWhile _ Nil = Nil
+takeWhile pred (x : xs) = if pred x then x : takeWhile pred xs else Nil
 
 drop :: ∀ a. Int -> List a -> List a
 drop _ Nil = Nil
