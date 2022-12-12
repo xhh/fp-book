@@ -69,7 +69,16 @@ test = do
   log $ show $ take 5 (12 : 13 : 14 : Nil)
   log $ show $ take 5 (-7 : 9 : 0 : 12 : -13 : 45 : 976 : -19 : Nil)
 
+  log "\n------- drop"
+  log $ show $ drop 2 (1 : 2 : 3 : 4 : 5 : 6 : 7 : Nil)
+  log $ show $ drop 10 (Nil :: List Unit)
+
   log ""
+
+drop :: ∀ a. Int -> List a -> List a
+drop _ Nil = Nil
+drop n l | n <= 0 = l
+drop n (_ : xs) = drop (n - 1) xs
 
 take :: ∀ a. Int -> List a -> List a
 take _ Nil = Nil
