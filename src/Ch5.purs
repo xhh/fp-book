@@ -89,7 +89,17 @@ test = do
   log $ show $ dropEnd 3 (1 : 2 : 3 : 4 : 5 : 6 : Nil)
   log $ show $ dropEnd 10 (1 : Nil)
 
+  log "\n------- zip"
+  log $ show $ zip (1 : 2 : 3 : Nil) ("a" : "b" : "c" : "d" : "e" : Nil)
+  log $ show $ zip ("a" : "b" : "c" : "d" : "e" : Nil) (1 : 2 : 3 : Nil)
+  log $ show $ zip (Nil :: List Unit) (1 : 2 : Nil)
+
   log ""
+
+zip :: ∀ a b. List a -> List b -> List (Tuple a b)
+zip Nil _ = Nil
+zip _ Nil = Nil
+zip (x : xs) (y : ys) = Tuple x y : zip xs ys
 
 dropEnd :: ∀ a. Int -> List a -> List a
 dropEnd n = go >>> snd
