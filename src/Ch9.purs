@@ -1,5 +1,6 @@
 module Ch9 where
 
+import Data.Maybe (Maybe(..))
 import Data.Generic.Rep (class Generic)
 import Data.Show.Generic (genericShow)
 import Effect (Effect)
@@ -11,15 +12,21 @@ test = do
   log $ show $ ATrue <> ATrue
   log $ show $ ATrue <> AFalse
   log $ show $ AFalse <> AFalse
+
   log "----- mempty"
   log $ show $ mempty <> ATrue == ATrue
   log $ show $ mempty <> AFalse == ATrue
+
   verifyAndBoolSemigroup
   verifyAndBoolMonoid
   verifyOrBoolSemigroup
   verifyOrBoolMonoid
   verifyMod4Semigroup
   verifyMod4Monoid
+
+  log "----- First and Last"
+  log $ show $ First Nothing <> First (Just 77)
+  log $ show $ Last (Just 1) <> Last (Just 99)
 
 verifyAndBoolSemigroup :: Effect Unit
 verifyAndBoolSemigroup = do
@@ -130,3 +137,29 @@ verifyMod4Monoid = do
   log $ show $ (One <> mempty == One) && (mempty <> One == One)
   log $ show $ (Two <> mempty == Two) && (mempty <> Two == Two)
   log $ show $ (Three <> mempty == Three) && (mempty <> Three == Three)
+
+newtype First a = First (Maybe a)
+newtype Last a = Last (Maybe a)
+
+instance semigroupFirst :: Semigroup (First a) where
+  append (First Nothing) x = x
+  append x _ = x
+
+instance monoidFirst :: Monoid (First a) where
+  mempty = First Nothing
+
+instance semigroupLast :: Semigroup (Last a) where
+  append x (Last Nothing) = x
+  append _ x = x
+
+instance monoidLast :: Monoid (Last a) where
+  mempty = Last Nothing
+
+derive instance genericFirst :: Generic (First a) _
+derive instance genericLast :: Generic (Last a) _
+
+instance showFirst :: Show a => Show (First a) where
+  show = genericShow
+
+instance showLast :: Show a => Show (Last a) where
+  show = genericShow
