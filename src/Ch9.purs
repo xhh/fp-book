@@ -18,6 +18,8 @@ test = do
   verifyAndBoolMonoid
   verifyOrBoolSemigroup
   verifyOrBoolMonoid
+  verifyMod4Semigroup
+  verifyMod4Monoid
 
 verifyAndBoolSemigroup :: Effect Unit
 verifyAndBoolSemigroup = do
@@ -81,3 +83,50 @@ instance semigroupOrBool :: Semigroup OrBool where
 
 instance monoidOrBool :: Monoid OrBool where
   mempty = OFalse
+
+data Mod4 = Zero | One | Two | Three
+
+instance semigroupMod4 :: Semigroup Mod4 where
+  append Zero x = x
+  append x Zero = x
+  append One One = Two
+  append One Two = Three
+  append One Three = Zero
+  append Two One = Three
+  append Two Two = Zero
+  append Two Three = One
+  append Three One = Zero
+  append Three Two = One
+  append Three Three = Two
+
+instance monoidMod4 :: Monoid Mod4 where
+  mempty = Zero
+
+class Monoid a <= Group a where
+  ginverse :: a -> a
+
+instance groupMod4 :: Group Mod4 where
+  ginverse Zero = Zero
+  ginverse One = Three
+  ginverse Two = Two
+  ginverse Three = One
+
+derive instance eqMod4 :: Eq Mod4
+derive instance genericMod4 :: Generic Mod4 _
+
+instance showMod4 :: Show Mod4 where
+  show = genericShow
+
+verifyMod4Semigroup :: Effect Unit
+verifyMod4Semigroup = do
+  log "Verifying Mod4 Semigroup Laws (2 tests)"
+  log $ show $ (Zero <> One) <> Two == Zero <> (One <> Two)
+  log $ show $ (One <> Two) <> Three == One <> (Two <> Three)
+
+verifyMod4Monoid :: Effect Unit
+verifyMod4Monoid = do
+  log "Verifying Mod4 Monoid Laws (4 tests)"
+  log $ show $ (Zero <> mempty == Zero) && (mempty <> Zero == Zero)
+  log $ show $ (One <> mempty == One) && (mempty <> One == One)
+  log $ show $ (Two <> mempty == Two) && (mempty <> Two == Two)
+  log $ show $ (Three <> mempty == Three) && (mempty <> Three == Three)
